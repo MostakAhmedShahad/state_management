@@ -45,9 +45,9 @@ class _HomeState extends State<Home> {
             case HomeLoadedSuccessState:
             return Scaffold(
           appBar: AppBar(
-            appBar: AppBar(
+             
               backgroundColor: Colors.teal,
-            )
+            
             title: Text('Glocery product'),
             actions: [
               IconButton(

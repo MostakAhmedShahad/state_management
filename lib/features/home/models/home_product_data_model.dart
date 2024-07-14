@@ -1,5 +1,4 @@
-class productDataModel{
-
+class productDataModel {
   final String id;
   final String name;
 
@@ -7,6 +6,11 @@ class productDataModel{
   final double price;
   final String imageUrl;
 
-  productDataModel(this.id, this.name, this.description, this.price, this.imageUrl);
-  
+  productDataModel({
+    required this.id,
+    required this.name,
+    required this.description,
+    required this.price,
+    required this.imageUrl,
+  });
 }

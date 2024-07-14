@@ -3,35 +3,33 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
-import 'package:state_management/data/glocery_data.dart';
+import 'package:state_management/data/grocery_data.dart';
 import 'package:state_management/features/home/models/home_product_data_model.dart';
-import 'package:state_management/features/home/ui/home.dart';
 
 part 'home_event.dart';
 part 'home_state.dart';
 
 class HomeBloc extends Bloc<HomeEvent, HomeState> {
   HomeBloc() : super(HomeInitial()) {
-    on<HomeInitialEvent>(
-      homeInitialEvent );
-    on<HomeProductWishlistButtonClickEvent>(
-        homeProductWishlistButtonClickEvent);
+    on<HomeInitialEvent>(homeInitialEvent);
+    on<HomeProductWishlistButtonClickEvent>(homeProductWishlistButtonClickEvent);
     on<HomeProductCartButtonClickEvent>(homeProductCartButtonClickEvent);
     on<HomeWishlistButtonNavigateEvent>(homeWishlistButtonNavigateEvent);
     on<HomeCartButtonNavigateEvent>(homeCartButtonNavigateEvent);
   }
-  FutureOr<void> homeInitialEvent(HomeInitialEvent event, Emitter<HomeState> emit) {
-  emit(HomeLoadingState());
-  await Future.delayed(Duration(seconds: 2));
-  emit(HomeLoadedSuccessState(
-    products: GloceryData.groceryProducts
-    .map((e) => productDataModel(
-      id:e['id'], 
-      name:e['name'],
-       description:e['description'],
-        price :e['price'],
-         imageUrl:e['image']))
-         .toList()));
+  Future<void> homeInitialEvent(
+      HomeInitialEvent event, Emitter<HomeState> emit) async {
+    emit(HomeLoadingState());
+    await Future.delayed(const Duration(seconds: 2));
+    emit(HomeLoadedSuccessState(
+        products: GroceryData.groceryProducts
+            .map((e) => productDataModel(
+                id: e['id'],
+                name: e['name'],
+                description: e['description'],
+                price: e['price'],
+                imageUrl: e['image']))
+            .toList()));
   }
 
   FutureOr<void> homeProductWishlistButtonClickEvent(
@@ -55,6 +53,4 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     print('cart navigate clicked');
     emit(HomeNavigateToWishlistPageActionState());
   }
-
-  
 }
