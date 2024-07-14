@@ -12,6 +12,11 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  @override
+  void initState() {
+     homeBloc.add(HomeInitialEvent());
+    super.initState();
+  }
   final HomeBloc homeBloc = HomeBloc();
   @override
   Widget build(BuildContext context) {
@@ -29,8 +34,20 @@ class _HomeState extends State<Home> {
         }
       },
       builder: (context, state) {
-        return Scaffold(
+        switch (state.runtimeType) {
+          case HomeLoadingState:
+          return Scaffold(
+            body: Center(
+              child: CircularProgressIndicator(),
+          ));
+
+             
+            case HomeLoadedSuccessState:
+            return Scaffold(
           appBar: AppBar(
+            appBar: AppBar(
+              backgroundColor: Colors.teal,
+            )
             title: Text('Glocery product'),
             actions: [
               IconButton(
@@ -46,6 +63,14 @@ class _HomeState extends State<Home> {
             ],
           ),
         );
+            
+            case HomeErrorState:
+            return Scaffold(body: Center(child: Text('Error')));
+          default:
+          return SizedBox();
+        }
+
+        
       },
     );
   }
