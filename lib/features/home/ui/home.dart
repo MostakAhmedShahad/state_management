@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:state_management/features/cart/ui/cart.dart';
-import 'package:state_management/features/home/bloc/home_bloc.dart';
-import 'package:state_management/features/wishlist/ui/wishlist.dart';
+import 'package:flutter_bloc_tutorial/features/cart/ui/cart.dart';
+import 'package:flutter_bloc_tutorial/features/home/bloc/home_bloc.dart';
+import 'package:flutter_bloc_tutorial/features/home/ui/product_tile_widget.dart';
+import 'package:flutter_bloc_tutorial/features/wishlist/ui/wishlist.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -14,9 +16,10 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   @override
   void initState() {
-     homeBloc.add(HomeInitialEvent());
+    homeBloc.add(HomeInitialEvent());
     super.initState();
   }
+
   final HomeBloc homeBloc = HomeBloc();
   @override
   Widget build(BuildContext context) {
@@ -31,46 +34,54 @@ class _HomeState extends State<Home> {
         } else if (state is HomeNavigateToWishlistPageActionState) {
           Navigator.push(
               context, MaterialPageRoute(builder: (context) => Wishlist()));
+        } else if (state is HomeProductItemCartedActionState) {
+          ScaffoldMessenger.of(context)
+              .showSnackBar(SnackBar(content: Text('Item Carted')));
+        } else if (state is HomeProductItemWishlistedActionState) {
+          ScaffoldMessenger.of(context)
+              .showSnackBar(SnackBar(content: Text('Item Wishlisted')));
         }
       },
       builder: (context, state) {
         switch (state.runtimeType) {
           case HomeLoadingState:
-          return Scaffold(
-            body: Center(
-              child: CircularProgressIndicator(),
-          ));
-
-             
-            case HomeLoadedSuccessState:
             return Scaffold(
-          appBar: AppBar(
-             
-              backgroundColor: Colors.teal,
-            
-            title: Text('Glocery product'),
-            actions: [
-              IconButton(
-                  onPressed: () {
-                    homeBloc.add(HomeWishlistButtonNavigateEvent());
-                  },
-                  icon: Icon(Icons.favorite_border)),
-              IconButton(
-                  onPressed: () {
-                    homeBloc.add(HomeCartButtonNavigateEvent());
-                  },
-                  icon: Icon(Icons.shopping_bag_outlined)),
-            ],
-          ),
-        );
-            
-            case HomeErrorState:
+                body: Center(
+              child: CircularProgressIndicator(),
+            ));
+          case HomeLoadedSuccessState:
+            final successState = state as HomeLoadedSuccessState;
+            return Scaffold(
+              appBar: AppBar(
+                backgroundColor: Colors.teal,
+                title: Text('Akshit Grocery App'),
+                actions: [
+                  IconButton(
+                      onPressed: () {
+                        homeBloc.add(HomeWishlistButtonNavigateEvent());
+                      },
+                      icon: Icon(Icons.favorite_border)),
+                  IconButton(
+                      onPressed: () {
+                        homeBloc.add(HomeCartButtonNavigateEvent());
+                      },
+                      icon: Icon(Icons.shopping_bag_outlined)),
+                ],
+              ),
+              body: ListView.builder(
+                  itemCount: successState.products.length,
+                  itemBuilder: (context, index) {
+                    return ProductTileWidget(
+                        homeBloc: homeBloc,
+                        productDataModel: successState.products[index]);
+                  }),
+            );
+
+          case HomeErrorState:
             return Scaffold(body: Center(child: Text('Error')));
           default:
-          return SizedBox();
+            return SizedBox();
         }
-
-        
       },
     );
   }
